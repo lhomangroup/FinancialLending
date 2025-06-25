@@ -51,7 +51,7 @@ export default function AdminPanel() {
   const queryClient = useQueryClient();
 
   const { data: applications, isLoading } = useQuery({
-    queryKey: ["/api/loan-applications"],
+    queryKey: ["/api/admin/loan-applications"],
   });
 
   const advanceStepMutation = useMutation({
@@ -77,7 +77,7 @@ export default function AdminPanel() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/loan-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/loan-applications"] });
       setLenderForm({ lenderId: "", lenderName: "" });
       toast({ title: "Prêteur assigné avec succès" });
     },
@@ -92,7 +92,7 @@ export default function AdminPanel() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/loan-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/loan-applications"] });
       setResponseForm({ response: "", message: "" });
       toast({ title: "Réponse du prêteur enregistrée" });
     },
@@ -107,7 +107,7 @@ export default function AdminPanel() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/loan-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/loan-applications"] });
       setAccountForm({ accountNumber: "" });
       toast({ title: "Numéro de compte enregistré" });
     },

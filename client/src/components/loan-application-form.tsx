@@ -651,11 +651,12 @@ export default function LoanApplicationForm() {
                       </Button>
                       <Button 
                         type="submit" 
-                        disabled={submitApplication.isPending}
+                        disabled={submitApplication.isPending || !isAuthenticated}
                         className="bg-success text-white hover:bg-green-600"
                       >
                         <Check className="mr-2 h-4 w-4" />
-{submitApplication.isPending ? "Soumission..." : "Soumettre ma demande"}
+                        {!isAuthenticated ? "Se connecter pour soumettre" : 
+                         submitApplication.isPending ? "Soumission..." : "Soumettre ma demande"}
                       </Button>
                     </div>
                   </div>
