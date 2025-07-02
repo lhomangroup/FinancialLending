@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Coins, Menu } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
+import { Link } from "wouter";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -20,15 +23,29 @@ export default function Header() {
     { label: "Support", id: "support" },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <Coins className="text-primary text-2xl mr-2" />
-              <span className="text-xl font-bold text-gray-900">MoneyFlow</span>
-            </div>
+            <Link href="/">
+              <div className="flex-shrink-0 flex items-center cursor-pointer">
+                <Coins className="text-primary text-2xl mr-2" />
+                <span className="text-xl font-bold text-gray-900">MoneyFlow</span>
+              </div>
+            </Link>
           </div>
           
           <div className="hidden md:block">
@@ -42,9 +59,35 @@ export default function Header() {
                   {item.label}
                 </button>
               ))}
-              <Button className="bg-primary text-white hover:bg-primary-dark">
-                Se connecter
-              </Button>
+              
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                  <Link href="/dashboard">
+                    <Button variant="outline">
+                      Tableau de bord
+                    </Button>
+                  </Link>
+                  <span className="text-sm text-gray-600">
+                    {user?.firstName}
+                  </span>
+                  <Button onClick={handleLogout} variant="ghost">
+                    Déconnexion
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Link href="/login">
+                    <Button variant="outline">
+                      Connexion
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button className="bg-primary text-white hover:bg-primary-dark">
+                      Créer un compte
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
           
@@ -66,9 +109,32 @@ export default function Header() {
                       {item.label}
                     </button>
                   ))}
-                  <Button className="bg-primary text-white hover:bg-primary-dark w-full">
-                    Se connecter
-                  </Button>
+                  
+                  {isAuthenticated ? (
+                    <>
+                      <Link href="/dashboard">
+                        <Button variant="outline" className="w-full">
+                          Tableau de bord
+                        </Button>
+                      </Link>
+                      <Button onClick={handleLogout} variant="ghost" className="w-full">
+                        Déconnexion
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login">
+                        <Button variant="outline" className="w-full">
+                          Connexion
+                        </Button>
+                      </Link>
+                      <Link href="/register">
+                        <Button className="bg-primary text-white hover:bg-primary-dark w-full">
+                          Créer un compte
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

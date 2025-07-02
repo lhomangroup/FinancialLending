@@ -1,20 +1,114 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import session from "express-session";
+import MemoryStore from "memorystore";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertLoanApplicationSchema } from "@shared/schema";
+import { isAuthenticated, hashPassword, comparePassword, getCurrentUser, type AuthenticatedRequest } from "./auth";
+import { insertLoanApplicationSchema, insertUserSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
+const MemoryStoreSession = MemoryStore(session);
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Session middleware
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    store: new MemoryStoreSession({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    }
+  }));
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.post('/api/auth/register', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      const validatedData = insertUserSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(validatedData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
+      }
+
+      // Hash password and create user
+      const hashedPassword = await hashPassword(validatedData.password);
+      const user = await storage.createUser({
+        ...validatedData,
+        password: hashedPassword
+      });
+
+      // Create session
+      (req.session as any).userId = user.id;
+      
+      // Return user without password
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Erreur lors de la création du compte" });
+    }
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email et mot de passe requis" });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+
+      // Check password
+      const isValidPassword = await comparePassword(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+
+      // Create session
+      (req.session as any).userId = user.id;
+      
+      // Return user without password
+      const { password: _, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Erreur lors de la connexion" });
+    }
+  });
+
+  app.post('/api/auth/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Erreur lors de la déconnexion" });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ message: "Déconnexion réussie" });
+    });
+  });
+
+  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+    try {
+      const user = await getCurrentUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -22,11 +116,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Loan application routes (protected)
-  app.post("/api/loan-applications", isAuthenticated, async (req: any, res) => {
+  app.post("/api/loan-applications", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
       const validatedData = insertLoanApplicationSchema.parse(req.body);
-      const userId = req.user.claims.sub;
-      const application = await storage.createLoanApplication(validatedData, userId);
+      const user = await getCurrentUser(req);
+      const application = await storage.createLoanApplication(validatedData, user.id);
       res.json(application);
     } catch (error: any) {
       if (error.name === "ZodError") {
@@ -53,10 +147,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user's applications
-  app.get("/api/loan-applications", isAuthenticated, async (req: any, res) => {
+  app.get("/api/loan-applications", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const applications = await storage.getLoanApplicationsByUserId(userId);
+      const user = await getCurrentUser(req);
+      const applications = await storage.getLoanApplicationsByUserId(user.id);
       res.json(applications);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
