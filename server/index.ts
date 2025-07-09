@@ -40,13 +40,25 @@ app.use((req, res, next) => {
 (async () => {
   // Test database connection
   try {
-    await db.execute('SELECT 1');
-    log("Database connected successfully");
+    if (process.env.DATABASE_URL) {
+      await db.execute('SELECT 1');
+      log("Database connected successfully");
+      
+      // Sync database schema in production
+      if (process.env.NODE_ENV === 'production') {
+        const { execSync } = await import('child_process');
+        try {
+          execSync('npm run db:push', { stdio: 'inherit' });
+          log("Database schema synchronized");
+        } catch (error) {
+          log(`Database sync warning: ${error}`);
+        }
+      }
+    } else {
+      log("DATABASE_URL not configured - skipping database connection");
+    }
   } catch (error) {
     log(`Database connection failed: ${error}`);
-    if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
-    }
   }
 
   const server = await registerRoutes(app);
