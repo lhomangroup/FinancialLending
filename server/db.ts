@@ -3,9 +3,8 @@ import postgres from 'postgres';
 import * as schema from "@shared/schema";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Please click 'Connect to Supabase' in the top right to provision a database.",
-  );
+  console.error("DATABASE_URL must be set. Please click 'Connect to Supabase' in the top right to provision a database.");
+  process.exit(1);
 }
 
 // Configure for Supabase

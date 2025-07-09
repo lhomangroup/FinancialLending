@@ -1,7 +1,8 @@
 import { defineConfig } from "drizzle-kit";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set. Please click 'Connect to Supabase' to provision a database.");
+  console.error("DATABASE_URL must be set. Please click 'Connect to Supabase' to provision a database.");
+  process.exit(1);
 }
 
 export default defineConfig({
