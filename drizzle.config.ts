@@ -1,10 +1,11 @@
 import { defineConfig } from "drizzle-kit";
 
-// Pour Railway, la variable DATABASE_URL est automatiquement injectée
-// mais seulement après que la base de données soit connectée
-if (!process.env.DATABASE_URL) {
-  console.warn("DATABASE_URL not found. Make sure PostgreSQL is connected to your Railway project.");
-  // Ne pas faire exit(1) car cela empêche le build
+// Railway utilise la syntaxe ${{ Postgres.DATABASE_URL }} pour référencer la base de données
+// La variable new_db sera automatiquement résolue par Railway
+const databaseUrl = process.env.new_db || process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  console.warn("new_db or DATABASE_URL not found. Make sure PostgreSQL is connected to your Railway project.");
 }
 
 export default defineConfig({
@@ -12,7 +13,7 @@ export default defineConfig({
   schema: "./shared/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL || "postgresql://placeholder",
+    url: databaseUrl || "postgresql://placeholder",
   },
   // Configuration pour Railway/PostgreSQL
   schemaFilter: ["public"],

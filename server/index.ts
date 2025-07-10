@@ -40,9 +40,10 @@ app.use((req, res, next) => {
 (async () => {
   // Test database connection
   try {
-    if (process.env.DATABASE_URL) {
+    const databaseUrl = process.env.new_db || process.env.DATABASE_URL;
+    if (databaseUrl) {
       await db.execute('SELECT 1');
-      log("Database connected successfully");
+      log(`Database connected successfully using ${process.env.new_db ? 'new_db' : 'DATABASE_URL'}`);
       
       // Sync database schema in production
       if (process.env.NODE_ENV === 'production') {
@@ -55,7 +56,7 @@ app.use((req, res, next) => {
         }
       }
     } else {
-      log("DATABASE_URL not configured - skipping database connection");
+      log("new_db or DATABASE_URL not configured - skipping database connection");
     }
   } catch (error) {
     log(`Database connection failed: ${error}`);
