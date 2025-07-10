@@ -1,0 +1,26 @@
+# ⚠️ ATTENTION : Cette application n'est PAS compatible avec Netlify
+# 
+# Netlify ne supporte que les sites statiques.
+# Cette application nécessite :
+# - Serveur Node.js/Express
+# - Base de données PostgreSQL
+# - Sessions côté serveur
+#
+# 🚀 Utilisez plutôt Railway : https://railway.app
+# 
+# Voir RAILWAY_DEPLOYMENT.md pour les instructions
+
+# Configuration Netlify (ne fonctionnera pas)
+[build]
+  command = "echo 'Cette application nécessite un serveur Node.js. Utilisez Railway à la place.'"
+  publish = "dist/public"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Variables d'environnement requises (pour Railway)
+# new_db=${{ Postgres.DATABASE_URL }}
+# SESSION_SECRET=votre-clé-secrète
+# NODE_ENV=production
