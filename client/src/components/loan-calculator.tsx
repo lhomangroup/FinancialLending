@@ -87,7 +87,7 @@ export default function LoanCalculator() {
             </div>
             <div className="mt-3 pt-3 border-t border-gray-200">
               <p className="text-xs text-gray-500">
-                <strong>Frais de dossier :</strong> Tarification personnalisée selon votre profil (100€ à 500€)
+                <strong>Frais de dossier :</strong> Selon votre profil (150€-500€) - Voir grille tarifaire
               </p>
             </div>
           </div>

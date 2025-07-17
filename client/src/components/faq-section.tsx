@@ -8,7 +8,7 @@ export default function FAQSection() {
   const faqs = [
     {
       question: "Quels sont les frais de dossier ?",
-      answer: "Nos frais de dossier sont personnalisés selon votre profil : Particulier (100€-250€), Travailleur indépendant (150€-300€), Commerçant (200€-400€), Entreprise (250€-500€). Le montant exact dépend de votre localisation (France/Côte d'Ivoire) et capacité de paiement. A la soumission, vous devriez effectuer le paiement de vos frais de dossier.",
+      answer: "Nos frais de dossier pour la France sont fixes selon votre profil : Particulier (150€), Travailleur indépendant (250€), Commerçant (300€), Entreprise (500€). Pour la Côte d'Ivoire, les tarifs sont ajustés selon la capacité de paiement. A la soumission, vous devriez effectuer le paiement de vos frais de dossier.",
     },
     {
       question: "Quels sont les conditions d'éligibilité ?",

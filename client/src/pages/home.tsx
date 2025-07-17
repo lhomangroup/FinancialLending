@@ -6,6 +6,7 @@ import HowItWorks from "@/components/how-it-works";
 import ProcessSimulator from "@/components/process-simulator";
 import LoanApplicationForm from "@/components/loan-application-form";
 import FeaturesSection from "@/components/features-section";
+import PricingGrid from "@/components/pricing-grid";
 import FAQSection from "@/components/faq-section";
 import Footer from "@/components/footer";
 
@@ -31,6 +32,7 @@ export default function Home() {
         </div>
       </section>
       <TrustIndicators />
+      <PricingGrid />
       <LoanApplicationForm />
       <FAQSection />
       <Footer />

@@ -20,7 +20,7 @@ export default function FeaturesSection() {
     {
       icon: Heart,
       title: "Simulation gratuite",
-      description: "La simulation est gratuite et sans engagement. Frais de dossier personnalisés (100€-500€) uniquement si votre demande est validée.",
+      description: "La simulation est gratuite et sans engagement. Frais de dossier selon votre profil (150€-500€) uniquement si votre demande est validée.",
       bgColor: "bg-yellow-100",
       iconColor: "text-warning",
     },

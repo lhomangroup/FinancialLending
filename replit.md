@@ -99,6 +99,7 @@ This is a loan application web platform built with a modern full-stack architect
 
 ```
 Changelog:
+- July 17, 2025: Added pricing grid display for France clients with fixed rates (150€-500€)
 - July 17, 2025: Implemented segmented processing fees based on client type, location, and payment capacity (100€-500€ range)
 - July 17, 2025: Added processing fee information (250€) for loan application analysis and validation
 - July 17, 2025: Updated loan interest rate from 5% to 18% annual rate

@@ -22,12 +22,12 @@ export interface FeeResult {
   };
 }
 
-// Base fees by client type (in euros)
+// Base fees by client type (in euros) - Updated based on France pricing grid
 const BASE_FEES: Record<ClientType, number> = {
-  particulier: 180,
-  indépendant: 220,
-  commerçant: 280,
-  entreprise: 350,
+  particulier: 150,
+  indépendant: 250,
+  commerçant: 300,
+  entreprise: 500,
 };
 
 // Country multipliers
@@ -111,12 +111,12 @@ export const calculateProcessingFee = (params: FeeCalculationParams): FeeResult 
   };
 };
 
-// Helper function to get fee ranges for display
+// Helper function to get fee ranges for display - Updated based on France pricing grid
 export const getFeeRanges = (): Record<ClientType, { min: number; max: number }> => {
   return {
-    particulier: { min: 100, max: 250 },
-    indépendant: { min: 150, max: 300 },
-    commerçant: { min: 200, max: 400 },
-    entreprise: { min: 250, max: 500 },
+    particulier: { min: 150, max: 150 }, // Fixed price for France
+    indépendant: { min: 250, max: 250 }, // Fixed price for France
+    commerçant: { min: 300, max: 300 }, // Fixed price for France
+    entreprise: { min: 500, max: 500 }, // Fixed price for France
   };
 };
