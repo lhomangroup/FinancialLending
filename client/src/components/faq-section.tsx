@@ -8,7 +8,7 @@ export default function FAQSection() {
   const faqs = [
     {
       question: "Quels sont les frais de dossier ?",
-      answer: "Nous facturons des frais de 250 euros pour l'analyse & validation de votre dossier pour le Prêteur. Ces frais couvrent l'étude complète de votre demande et sa présentation aux partenaires financiers. A la soumission, vous devriez effectuer le paiement de vos frais de dossier.",
+      answer: "Nos frais de dossier sont personnalisés selon votre profil : Particulier (100€-250€), Travailleur indépendant (150€-300€), Commerçant (200€-400€), Entreprise (250€-500€). Le montant exact dépend de votre localisation (France/Côte d'Ivoire) et capacité de paiement. A la soumission, vous devriez effectuer le paiement de vos frais de dossier.",
     },
     {
       question: "Quels sont les conditions d'éligibilité ?",

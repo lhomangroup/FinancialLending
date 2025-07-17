@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { calculateLoan } from "@/lib/loan-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { calculateProcessingFee } from "@shared/fee-calculator";
 
 type FormData = {
   amount: number;
@@ -30,6 +31,9 @@ type FormData = {
   employmentStatus: string;
   monthlyIncome: string;
   monthlyExpenses?: number;
+  clientType: "particulier" | "indépendant" | "commerçant" | "entreprise";
+  country: "France" | "Côte d'Ivoire";
+  processingFee: number;
   termsAccepted: boolean;
   creditCheckAccepted: boolean;
   marketingAccepted?: boolean;
@@ -101,6 +105,9 @@ export default function LoanApplicationForm() {
       employmentStatus: "",
       monthlyIncome: "",
       monthlyExpenses: 0,
+      clientType: "particulier",
+      country: "France",
+      processingFee: 0,
       termsAccepted: false,
       creditCheckAccepted: false,
       marketingAccepted: false,
@@ -118,7 +125,25 @@ export default function LoanApplicationForm() {
 
   const amount = form.watch("amount");
   const duration = form.watch("duration");
+  const clientType = form.watch("clientType");
+  const country = form.watch("country");
+  const monthlyIncome = form.watch("monthlyIncome");
   const calculation = calculateLoan(amount, duration);
+  
+  // Calculate processing fee dynamically
+  const processingFeeData = monthlyIncome ? calculateProcessingFee({
+    clientType: clientType || "particulier",
+    country: country || "France",
+    monthlyIncome: monthlyIncome || "1500-2000",
+    loanAmount: amount || 1500,
+  }) : null;
+  
+  // Update processing fee in form when it changes
+  useEffect(() => {
+    if (processingFeeData && processingFeeData.processingFee !== form.getValues("processingFee")) {
+      form.setValue("processingFee", processingFeeData.processingFee);
+    }
+  }, [processingFeeData?.processingFee, form]);
 
   const submitApplication = useMutation({
     mutationFn: async (data: FormData) => {
@@ -456,9 +481,14 @@ export default function LoanApplicationForm() {
                     <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
                       <h4 className="font-semibold text-blue-900 mb-2">Frais de dossier</h4>
                       <p className="text-blue-800 text-sm">
-                        Nous facturons des frais de <strong>250 euros</strong> pour l'analyse & validation de votre dossier pour le Prêteur. 
+                        Frais de dossier : <strong>{processingFeeData?.processingFee || 250} euros</strong> pour l'analyse & validation de votre dossier pour le Prêteur. 
                         A la soumission, vous devriez effectuer le paiement de vos frais de dossier.
                       </p>
+                      {processingFeeData && (
+                        <p className="text-blue-700 text-xs mt-2">
+                          {processingFeeData.description}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex justify-end">
@@ -547,6 +577,54 @@ export default function LoanApplicationForm() {
                       )}
                     />
 
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="clientType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Type de client *</FormLabel>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Sélectionnez votre profil" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="particulier">Particulier</SelectItem>
+                                <SelectItem value="indépendant">Travailleur indépendant</SelectItem>
+                                <SelectItem value="commerçant">Commerçant</SelectItem>
+                                <SelectItem value="entreprise">Entreprise</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pays de résidence *</FormLabel>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Sélectionnez votre pays" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="France">France</SelectItem>
+                                <SelectItem value="Côte d'Ivoire">Côte d'Ivoire</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
                       name="employmentStatus"
@@ -588,10 +666,13 @@ export default function LoanApplicationForm() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
+                                <SelectItem value="moins-1000">Moins de 1 000€</SelectItem>
                                 <SelectItem value="1000-1500">1 000€ - 1 500€</SelectItem>
                                 <SelectItem value="1500-2000">1 500€ - 2 000€</SelectItem>
-                                <SelectItem value="2000-3000">2 000€ - 3 000€</SelectItem>
-                                <SelectItem value="3000+">Plus de 3 000€</SelectItem>
+                                <SelectItem value="2000-2500">2 000€ - 2 500€</SelectItem>
+                                <SelectItem value="2500-3000">2 500€ - 3 000€</SelectItem>
+                                <SelectItem value="3000-4000">3 000€ - 4 000€</SelectItem>
+                                <SelectItem value="plus-4000">Plus de 4 000€</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -646,7 +727,20 @@ export default function LoanApplicationForm() {
                         <div>
                           <span className="font-medium">Coût total :</span> {calculation.totalCost}€
                         </div>
+                        <div>
+                          <span className="font-medium">Profil :</span> {clientType} - {country}
+                        </div>
+                        <div>
+                          <span className="font-medium">Frais de dossier :</span> {processingFeeData?.processingFee || 250}€
+                        </div>
                       </div>
+                      {processingFeeData && (
+                        <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+                          <p className="text-xs text-blue-700">
+                            <strong>Tarification personnalisée :</strong> {processingFeeData.description}
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-4">

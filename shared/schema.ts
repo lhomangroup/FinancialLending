@@ -60,6 +60,11 @@ export const loanApplications = pgTable("loan_applications", {
   monthlyIncome: text("monthly_income").notNull(),
   monthlyExpenses: integer("monthly_expenses"),
   
+  // Client segmentation for fee calculation
+  clientType: text("client_type").notNull(), // particulier, indépendant, commerçant, entreprise
+  country: text("country").notNull(), // France, Côte d'Ivoire
+  processingFee: integer("processing_fee").notNull(), // calculated based on segmentation
+  
   // Process tracking - 7 steps
   currentStep: integer("current_step").notNull().default(1), // 1-7
   step1CompletedAt: timestamp("step1_completed_at"), // Simulation completed
@@ -115,6 +120,9 @@ export const insertLoanApplicationSchema = createInsertSchema(loanApplications).
   employmentStatus: z.string().min(1, "Employment status is required"),
   monthlyIncome: z.string().min(1, "Monthly income is required"),
   monthlyExpenses: z.number().optional(),
+  clientType: z.enum(["particulier", "indépendant", "commerçant", "entreprise"]).default("particulier"),
+  country: z.enum(["France", "Côte d'Ivoire"]).default("France"),
+  processingFee: z.number().min(0),
   termsAccepted: z.boolean().refine((val) => val === true, "You must accept the terms and conditions"),
   creditCheckAccepted: z.boolean().refine((val) => val === true, "You must accept the credit check"),
   marketingAccepted: z.boolean().optional(),
