@@ -99,6 +99,7 @@ This is a loan application web platform built with a modern full-stack architect
 
 ```
 Changelog:
+- July 17, 2025: Implemented payment modal with localized payment methods (Mobile Money for Côte d'Ivoire, Cards/Crypto for other regions)
 - July 17, 2025: Successfully implemented complete registration form with client type and country selection
 - July 17, 2025: Added pricing grid display for Côte d'Ivoire clients with FCFA rates (50k-150k FCFA)
 - July 17, 2025: Added pricing grid display for France clients with fixed rates (150€-500€)

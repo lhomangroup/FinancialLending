@@ -18,6 +18,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { calculateLoan } from "@/lib/loan-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { calculateProcessingFee } from "@shared/fee-calculator";
+import PaymentModal from "@/components/payment-modal";
 
 type FormData = {
   amount: number;
@@ -44,9 +45,11 @@ type FormData = {
 export default function LoanApplicationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [savedFormData, setSavedFormData] = useState<FormData | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [submittedApplication, setSubmittedApplication] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   // Charger les paramètres du prêt sauvegardés
   useEffect(() => {
@@ -174,21 +177,14 @@ export default function LoanApplicationForm() {
       // Clear saved form data
       localStorage.removeItem('loanApplicationData');
       
+      // Store the application data and show payment modal
+      setSubmittedApplication(data);
+      setShowPaymentModal(true);
+      
       toast({
         title: "Demande soumise !",
-        description: "Votre demande a été envoyée avec succès. Vous pouvez maintenant suivre son avancement dans votre espace client.",
+        description: "Votre demande a été envoyée avec succès. Veuillez effectuer le paiement des frais de dossier.",
       });
-      
-      // Redirect to status page
-      if (data?.id) {
-        setTimeout(() => {
-          window.location.href = `/dashboard`;
-        }, 1500);
-      }
-      
-      // Reset form
-      form.reset();
-      setCurrentStep(1);
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
@@ -847,6 +843,26 @@ export default function LoanApplicationForm() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Payment Modal */}
+      {showPaymentModal && submittedApplication && user && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            // Reset form and redirect to dashboard after payment modal closes
+            form.reset();
+            setCurrentStep(1);
+            setTimeout(() => {
+              window.location.href = `/dashboard`;
+            }, 1000);
+          }}
+          processingFee={form.getValues("processingFee")}
+          currency={user.country === "Côte d'Ivoire" ? " FCFA" : "€"}
+          clientType={user.clientType}
+          country={user.country}
+        />
+      )}
     </section>
   );
 }
