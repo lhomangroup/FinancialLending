@@ -34,6 +34,8 @@ export const users = pgTable("users", {
   lastName: varchar("last_name").notNull(),
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role").default("user").notNull(),
+  clientType: varchar("client_type").default("particulier").notNull(), // particulier, indépendant, commerçant, entreprise
+  country: varchar("country").default("France").notNull(), // France, Côte d'Ivoire
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -93,8 +95,24 @@ export const loanApplications = pgTable("loan_applications", {
   marketingAccepted: boolean("marketing_accepted").notNull().default(false),
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  profileImageUrl: true,
+  role: true,
+}).extend({
+  firstName: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
+  lastName: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  email: z.string().email("Email invalide"),
+  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  clientType: z.enum(["particulier", "indépendant", "commerçant", "entreprise"]).default("particulier"),
+  country: z.enum(["France", "Côte d'Ivoire"]).default("France"),
+});
+
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export const insertLoanApplicationSchema = createInsertSchema(loanApplications).omit({
   id: true,

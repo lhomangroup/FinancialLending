@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -24,6 +25,8 @@ const registerSchema = z.object({
   password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
   firstName: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
   lastName: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  clientType: z.enum(["particulier", "indépendant", "commerçant", "entreprise"]).default("particulier"),
+  country: z.enum(["France", "Côte d'Ivoire"]).default("France"),
 });
 
 type LoginData = z.infer<typeof loginSchema>;
@@ -50,6 +53,8 @@ export default function AuthPage() {
       password: "",
       firstName: "",
       lastName: "",
+      clientType: "particulier",
+      country: "France",
     },
   });
 
@@ -250,6 +255,55 @@ export default function AuthPage() {
                           </FormItem>
                         )}
                       />
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={registerForm.control}
+                          name="clientType"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Type de client</FormLabel>
+                              <FormControl>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Sélectionnez votre profil" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="particulier">Particulier</SelectItem>
+                                    <SelectItem value="indépendant">Indépendant</SelectItem>
+                                    <SelectItem value="commerçant">Commerçant</SelectItem>
+                                    <SelectItem value="entreprise">Entreprise</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={registerForm.control}
+                          name="country"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Pays</FormLabel>
+                              <FormControl>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Sélectionnez votre pays" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="France">France</SelectItem>
+                                    <SelectItem value="Côte d'Ivoire">Côte d'Ivoire</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
                       <Button 
                         type="submit" 
                         className="w-full"

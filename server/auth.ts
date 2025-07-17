@@ -83,9 +83,9 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, firstName, lastName, clientType, country } = req.body;
       
-      if (!email || !password || !firstName || !lastName) {
+      if (!email || !password || !firstName || !lastName || !clientType || !country) {
         return res.status(400).json({ message: "Tous les champs sont requis" });
       }
 
@@ -101,6 +101,8 @@ export function setupAuth(app: Express) {
         password: hashedPassword,
         firstName,
         lastName,
+        clientType,
+        country,
       });
 
       req.login(user, (err) => {
@@ -108,7 +110,14 @@ export function setupAuth(app: Express) {
           console.error("Login error:", err);
           return next(err);
         }
-        res.status(201).json({ id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName });
+        res.status(201).json({ 
+          id: user.id, 
+          email: user.email, 
+          firstName: user.firstName, 
+          lastName: user.lastName,
+          clientType: user.clientType,
+          country: user.country
+        });
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -118,7 +127,14 @@ export function setupAuth(app: Express) {
 
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
     const user = req.user as SelectUser;
-    res.json({ id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName });
+    res.json({ 
+      id: user.id, 
+      email: user.email, 
+      firstName: user.firstName, 
+      lastName: user.lastName,
+      clientType: user.clientType,
+      country: user.country
+    });
   });
 
   app.post("/api/logout", (req, res, next) => {
