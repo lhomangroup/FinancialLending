@@ -19,8 +19,8 @@ export default function FeaturesSection() {
     },
     {
       icon: Heart,
-      title: "Sans engagement",
-      description: "La simulation est gratuite et sans engagement. Vous pouvez annuler à tout moment.",
+      title: "Simulation gratuite",
+      description: "La simulation est gratuite et sans engagement. Frais de dossier de 250€ uniquement si votre demande est validée.",
       bgColor: "bg-yellow-100",
       iconColor: "text-warning",
     },

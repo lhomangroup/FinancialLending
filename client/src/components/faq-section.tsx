@@ -7,6 +7,10 @@ export default function FAQSection() {
 
   const faqs = [
     {
+      question: "Quels sont les frais de dossier ?",
+      answer: "Nous facturons des frais de 250 euros pour l'analyse & validation de votre dossier pour le Prêteur. Ces frais couvrent l'étude complète de votre demande et sa présentation aux partenaires financiers. Nous vous enverrons un lien de paiement par email après validation de votre demande.",
+    },
+    {
       question: "Quels sont les conditions d'éligibilité ?",
       answer: "Pour être éligible, vous devez être majeur, résider en France, avoir des revenus réguliers d'au moins 1000€ nets par mois et ne pas être inscrit au FICP.",
     },

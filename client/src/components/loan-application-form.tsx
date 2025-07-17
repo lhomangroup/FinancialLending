@@ -452,6 +452,15 @@ export default function LoanApplicationForm() {
                       </div>
                     </div>
 
+                    {/* Processing Fees Notice */}
+                    <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
+                      <h4 className="font-semibold text-blue-900 mb-2">Frais de dossier</h4>
+                      <p className="text-blue-800 text-sm">
+                        Nous facturons des frais de <strong>250 euros</strong> pour l'analyse & validation de votre dossier pour le Prêteur. 
+                        Nous vous enverrons un lien de paiement par email après validation de votre demande.
+                      </p>
+                    </div>
+
                     <div className="flex justify-end">
                       <Button onClick={nextStep} className="bg-primary text-white hover:bg-primary-dark">
                         Continuer

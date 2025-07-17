@@ -99,6 +99,7 @@ This is a loan application web platform built with a modern full-stack architect
 
 ```
 Changelog:
+- July 17, 2025: Added processing fee information (250€) for loan application analysis and validation
 - July 17, 2025: Updated loan interest rate from 5% to 18% annual rate
 - July 17, 2025: Extended loan repayment duration from 12 to 24 months maximum (3, 6, 9, 12, 15, 18, 21, 24 months options)
 - June 25, 2025: Created admin account (email: admin@gmail.com, password: Sydney220304!) with full administrative rights
