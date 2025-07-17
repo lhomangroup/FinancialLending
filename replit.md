@@ -99,6 +99,7 @@ This is a loan application web platform built with a modern full-stack architect
 
 ```
 Changelog:
+- July 17, 2025: Fixed progression logic to automatically advance applications to step 4 (Analyse) after payment completion
 - July 17, 2025: Enhanced user dashboard with payment information display and processing fee details with currency conversion
 - July 17, 2025: Implemented auto-filled user information in loan application form with disabled fields for authenticated users
 - July 17, 2025: Implemented payment modal with localized payment methods (Mobile Money for Côte d'Ivoire, Cards/Crypto for other regions)

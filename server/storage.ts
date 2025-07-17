@@ -79,6 +79,13 @@ export class DatabaseStorage implements IStorage {
         totalCost: insertApplication.totalCost || "0",
         monthlyExpenses: insertApplication.monthlyExpenses || null,
         marketingAccepted: insertApplication.marketingAccepted || false,
+        // Set to step 4 (Analyse) since payment is completed during submission
+        currentStep: 4,
+        status: "step4",
+        step1CompletedAt: new Date(),
+        step2CompletedAt: new Date(),
+        step3CompletedAt: new Date(),
+        step4CompletedAt: new Date(),
       })
       .returning();
     return application;
