@@ -126,6 +126,17 @@ export default function LoanApplicationForm() {
     }
   }, [savedFormData, form]);
 
+  // Pre-fill user information when authenticated
+  useEffect(() => {
+    if (user && isAuthenticated) {
+      form.setValue("firstName", user.firstName || "");
+      form.setValue("lastName", user.lastName || "");
+      form.setValue("email", user.email || "");
+      form.setValue("clientType", user.clientType || "particulier");
+      form.setValue("country", user.country || "France");
+    }
+  }, [user, isAuthenticated, form]);
+
   const amount = form.watch("amount");
   const duration = form.watch("duration");
   const clientType = form.watch("clientType");
@@ -509,7 +520,12 @@ export default function LoanApplicationForm() {
                           <FormItem>
                             <FormLabel>Prénom *</FormLabel>
                             <FormControl>
-                              <Input placeholder="Votre prénom" {...field} />
+                              <Input 
+                                placeholder="Votre prénom" 
+                                {...field} 
+                                disabled={isAuthenticated && user}
+                                className={isAuthenticated && user ? "bg-gray-100 cursor-not-allowed" : ""}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -522,7 +538,12 @@ export default function LoanApplicationForm() {
                           <FormItem>
                             <FormLabel>Nom *</FormLabel>
                             <FormControl>
-                              <Input placeholder="Votre nom" {...field} />
+                              <Input 
+                                placeholder="Votre nom" 
+                                {...field} 
+                                disabled={isAuthenticated && user}
+                                className={isAuthenticated && user ? "bg-gray-100 cursor-not-allowed" : ""}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -538,7 +559,13 @@ export default function LoanApplicationForm() {
                           <FormItem>
                             <FormLabel>Email *</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="votre@email.com" {...field} />
+                              <Input 
+                                type="email" 
+                                placeholder="votre@email.com" 
+                                {...field} 
+                                disabled={isAuthenticated && user}
+                                className={isAuthenticated && user ? "bg-gray-100 cursor-not-allowed" : ""}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -580,9 +607,13 @@ export default function LoanApplicationForm() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Type de client *</FormLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                              disabled={isAuthenticated && user}
+                            >
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className={isAuthenticated && user ? "bg-gray-100 cursor-not-allowed" : ""}>
                                   <SelectValue placeholder="Sélectionnez votre profil" />
                                 </SelectTrigger>
                               </FormControl>
@@ -604,9 +635,13 @@ export default function LoanApplicationForm() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Pays de résidence *</FormLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                              disabled={isAuthenticated && user}
+                            >
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className={isAuthenticated && user ? "bg-gray-100 cursor-not-allowed" : ""}>
                                   <SelectValue placeholder="Sélectionnez votre pays" />
                                 </SelectTrigger>
                               </FormControl>
