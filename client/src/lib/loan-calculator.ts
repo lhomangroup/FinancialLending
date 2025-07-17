@@ -4,7 +4,7 @@ export interface LoanCalculation {
   interestRate: number;
 }
 
-export function calculateLoan(amount: number, durationMonths: number, annualRate: number = 0.05): LoanCalculation {
+export function calculateLoan(amount: number, durationMonths: number, annualRate: number = 0.18): LoanCalculation {
   // Ensure inputs are valid
   if (amount <= 0 || durationMonths <= 0 || annualRate < 0) {
     throw new Error("Invalid loan parameters");
