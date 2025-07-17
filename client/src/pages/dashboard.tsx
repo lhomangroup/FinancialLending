@@ -235,6 +235,49 @@ export default function Dashboard() {
                     <div>
                       <span className="font-medium">Email:</span> {application.email}
                     </div>
+                    <div>
+                      <span className="font-medium">Frais de dossier:</span> {application.processingFee}€
+                      {application.country === "Côte d'Ivoire" && (
+                        <span className="text-gray-500 ml-1">
+                          (~{Math.round(application.processingFee * 655.957).toLocaleString()} FCFA)
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium">Profil:</span> {application.clientType} - {application.country}
+                    </div>
+                  </div>
+
+                  {/* Payment Information */}
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <h5 className="font-medium text-green-900 mb-2 flex items-center">
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      Informations de paiement
+                    </h5>
+                    <div className="text-sm text-green-800">
+                      <div className="grid md:grid-cols-2 gap-2">
+                        <div>
+                          <span className="font-medium">Frais de dossier:</span> {application.processingFee}€
+                          {application.country === "Côte d'Ivoire" && (
+                            <span className="block text-green-600 text-xs">
+                              Équivalent: {Math.round(application.processingFee * 655.957).toLocaleString()} FCFA
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-medium">Statut paiement:</span> 
+                          <Badge variant="default" className="bg-green-600 ml-2">Payé</Badge>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-green-700">
+                        Les frais de dossier couvrent l'analyse et la validation de votre demande par nos partenaires financiers.
+                        {application.country === "Côte d'Ivoire" && (
+                          <div className="mt-1">
+                            <strong>Moyens de paiement disponibles:</strong> Orange Money, MTN Money, Moov Money, Crypto
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Lender Information */}
