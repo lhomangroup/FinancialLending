@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a loan application web platform built with a modern full-stack architecture. The application allows users to simulate and apply for personal loans ranging from €500 to €3,000 with flexible repayment terms up to 12 months. The platform features a French-language interface designed for the European market.
+This is a loan application web platform built with a modern full-stack architecture. The application allows users to simulate and apply for personal loans ranging from €500 to €3,000 with flexible repayment terms up to 24 months. The platform features a French-language interface designed for the European market.
 
 ## System Architecture
 
@@ -99,6 +99,7 @@ This is a loan application web platform built with a modern full-stack architect
 
 ```
 Changelog:
+- July 17, 2025: Extended loan repayment duration from 12 to 24 months maximum (3, 6, 9, 12, 15, 18, 21, 24 months options)
 - June 25, 2025: Created admin account (email: admin@gmail.com, password: Sydney220304!) with full administrative rights
 - June 25, 2025: Implemented comprehensive admin dashboard for managing all loan applications
 - June 25, 2025: Added user role system (user/admin) to the database schema

@@ -105,7 +105,7 @@ export const insertLoanApplicationSchema = createInsertSchema(loanApplications).
   step7CompletedAt: true,
 }).extend({
   amount: z.number().min(500).max(3000),
-  duration: z.number().min(3).max(12),
+  duration: z.number().min(3).max(24),
   purpose: z.string().min(1, "Purpose is required"),
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
