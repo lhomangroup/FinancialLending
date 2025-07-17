@@ -8,7 +8,7 @@ export default function FAQSection() {
   const faqs = [
     {
       question: "Quels sont les frais de dossier ?",
-      answer: "Nous facturons des frais de 250 euros pour l'analyse & validation de votre dossier pour le Prêteur. Ces frais couvrent l'étude complète de votre demande et sa présentation aux partenaires financiers. Nous vous enverrons un lien de paiement par email après validation de votre demande.",
+      answer: "Nous facturons des frais de 250 euros pour l'analyse & validation de votre dossier pour le Prêteur. Ces frais couvrent l'étude complète de votre demande et sa présentation aux partenaires financiers. A la soumission, vous devriez effectuer le paiement de vos frais de dossier.",
     },
     {
       question: "Quels sont les conditions d'éligibilité ?",

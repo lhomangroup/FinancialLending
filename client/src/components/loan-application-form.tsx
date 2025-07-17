@@ -457,7 +457,7 @@ export default function LoanApplicationForm() {
                       <h4 className="font-semibold text-blue-900 mb-2">Frais de dossier</h4>
                       <p className="text-blue-800 text-sm">
                         Nous facturons des frais de <strong>250 euros</strong> pour l'analyse & validation de votre dossier pour le Prêteur. 
-                        Nous vous enverrons un lien de paiement par email après validation de votre demande.
+                        A la soumission, vous devriez effectuer le paiement de vos frais de dossier.
                       </p>
                     </div>
 
