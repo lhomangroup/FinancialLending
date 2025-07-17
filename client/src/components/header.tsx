@@ -59,7 +59,7 @@ export default function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
               <Coins className="text-primary text-2xl mr-2" />
-              <span className="text-xl font-bold text-gray-900">MoneyFlow</span>
+              <span className="text-xl font-bold text-gray-900">MoneyFlow by LG</span>
             </div>
           </div>
           

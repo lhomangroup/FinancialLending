@@ -44,7 +44,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center mb-6">
               <Coins className="text-primary text-2xl mr-2" />
-              <span className="text-xl font-bold">MoneyFlow</span>
+              <span className="text-xl font-bold">MoneyFlow by LG</span>
             </div>
             <p className="text-gray-400 mb-6">
               Solution de prêt personnel simple, rapide et sécurisée.
@@ -86,7 +86,7 @@ export default function Footer() {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2024 MoneyFlow est un service de LHOMAN GROUP SA. Tous droits réservés. | Un crédit vous engage et doit être remboursé.
+            &copy; 2024 MoneyFlow by LG est un service de LHOMAN GROUP SA. Tous droits réservés. | Un crédit vous engage et doit être remboursé.
           </p>
         </div>
       </div>
