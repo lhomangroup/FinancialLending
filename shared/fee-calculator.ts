@@ -30,10 +30,18 @@ const BASE_FEES: Record<ClientType, number> = {
   entreprise: 500,
 };
 
-// Country multipliers
+// Country multipliers and base fees
 const COUNTRY_MULTIPLIERS: Record<Country, number> = {
   France: 1.0,
   "Côte d'Ivoire": 0.75, // Lower fees for Côte d'Ivoire market
+};
+
+// Côte d'Ivoire specific pricing (in euros equivalent of FCFA)
+const COTE_IVOIRE_FEES: Record<ClientType, number> = {
+  particulier: 76, // 50,000 FCFA
+  indépendant: 114, // 75,000 FCFA
+  commerçant: 152, // 100,000 FCFA
+  entreprise: 228, // 150,000 FCFA
 };
 
 // Income-based adjustments
@@ -83,14 +91,25 @@ const getAverageIncome = (monthlyIncome: string): number => {
 export const calculateProcessingFee = (params: FeeCalculationParams): FeeResult => {
   const { clientType, country, monthlyIncome, loanAmount } = params;
   
-  const baseRate = BASE_FEES[clientType];
-  const countryMultiplier = COUNTRY_MULTIPLIERS[country];
-  const incomeAdjustment = getIncomeAdjustment(monthlyIncome, loanAmount);
+  let finalFee: number;
+  let baseRate: number;
+  let countryMultiplier: number = 1;
+  let incomeAdjustment: number = 1;
   
-  const finalFee = Math.round(baseRate * countryMultiplier * incomeAdjustment);
-  
-  // Ensure minimum fee of 100€ and maximum of 500€
-  const cappedFee = Math.max(100, Math.min(500, finalFee));
+  if (country === "Côte d'Ivoire") {
+    // Fixed pricing for Côte d'Ivoire
+    finalFee = COTE_IVOIRE_FEES[clientType];
+    baseRate = finalFee;
+  } else {
+    // France pricing with adjustments
+    baseRate = BASE_FEES[clientType];
+    countryMultiplier = COUNTRY_MULTIPLIERS[country];
+    incomeAdjustment = getIncomeAdjustment(monthlyIncome, loanAmount);
+    finalFee = Math.round(baseRate * countryMultiplier * incomeAdjustment);
+    
+    // Ensure minimum fee of 100€ and maximum of 500€ for France
+    finalFee = Math.max(100, Math.min(500, finalFee));
+  }
   
   const descriptions = {
     particulier: "Particulier",
@@ -100,13 +119,13 @@ export const calculateProcessingFee = (params: FeeCalculationParams): FeeResult 
   };
 
   return {
-    processingFee: cappedFee,
+    processingFee: finalFee,
     description: `Frais de dossier pour ${descriptions[clientType]} - ${country}`,
     breakdown: {
       baseRate,
       countryMultiplier,
       incomeAdjustment,
-      finalFee: cappedFee,
+      finalFee,
     },
   };
 };

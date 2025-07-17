@@ -7,6 +7,7 @@ import ProcessSimulator from "@/components/process-simulator";
 import LoanApplicationForm from "@/components/loan-application-form";
 import FeaturesSection from "@/components/features-section";
 import PricingGrid from "@/components/pricing-grid";
+import PricingGridIvoryCoast from "@/components/pricing-grid-ivory-coast";
 import FAQSection from "@/components/faq-section";
 import Footer from "@/components/footer";
 
@@ -33,6 +34,7 @@ export default function Home() {
       </section>
       <TrustIndicators />
       <PricingGrid />
+      <PricingGridIvoryCoast />
       <LoanApplicationForm />
       <FAQSection />
       <Footer />
