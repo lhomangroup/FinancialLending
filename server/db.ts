@@ -1,5 +1,6 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import 'dotenv/config';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
 import * as schema from "@shared/schema";
 
 if (!process.env.DATABASE_URL) {
@@ -8,5 +9,6 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-const client = postgres(process.env.DATABASE_URL, { prepare: false });
+const sqliteUrl = process.env.DATABASE_URL?.replace('sqlite://', '');
+const client = new Database(sqliteUrl!);
 export const db = drizzle(client, { schema });
