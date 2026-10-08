@@ -1,0 +1,91 @@
+# Base44 dev environment for this repo.
+#
+# Architecture: one Node process (server/index.ts) exposes the REST API and, in
+# development, mounts Vite in middleware mode to serve the React client
+# (client/) with hot reload. Its datastore is PostgreSQL, accessed through
+# drizzle-orm/postgres-js with the pg-core schema in shared/schema.ts.
+#
+# Everything runs from the mounted source (never a prebuilt app image), so edits
+# show up without rebuilding. No external credentials are needed: the database
+# runs locally in this file and sessions are kept in memory.
+#
+# Run with: docker compose -f docker-compose.base44.yml up -d --build
+
+# Local database connection. Credentials are for this throwaway compose
+# database only; they are generated here, not user-supplied secrets.
+x-database-url: &database-url postgres://app:base44_local_dev@db:5432/financial_lending
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=base44_local_dev
+      - POSTGRES_DB=financial_lending
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d financial_lending"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: on-failure
+
+  # One-shot: installs dependencies from the lockfile and applies the schema.
+  setup:
+    image: node:20
+    working_dir: /app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: *database-url
+    command:
+      - sh
+      - -ec
+      - |
+        if [ ! -f node_modules/.base44-install-stamp ] || ! cmp -s package-lock.json node_modules/.base44-install-stamp; then
+          echo "[base44] installing dependencies from package-lock.json"
+          npm ci --no-audit --no-fund
+          cp package-lock.json node_modules/.base44-install-stamp
+        fi
+        echo "[base44] applying database schema (drizzle-kit push)"
+        npx drizzle-kit push --force
+    volumes:
+      - .:/app
+
+  app:
+    image: node:20
+    working_dir: /app
+    depends_on:
+      db:
+        condition: service_healthy
+      setup:
+        condition: service_completed_successfully
+    # tsx watch restarts the server on backend edits; Vite middleware handles
+    # the client's hot reload.
+    command: ["sh", "-ec", "exec npx tsx watch server/index.ts"]
+    ports:
+      - "3000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      HOST: 0.0.0.0
+      DATABASE_URL: *database-url
+    volumes:
+      - .:/app
+    healthcheck:
+      # Probes the API and the client entry point served by the Vite middleware.
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "Promise.all(['http://127.0.0.1:5000/api/user','http://127.0.0.1:5000/'].map(u=>fetch(u).then(r=>({u,s:r.status})).catch(e=>({u,err:e.message})))).then(rs=>{const bad=rs.filter(r=>r.err||r.s>=500);if(bad.length){console.error('[health] failing:',JSON.stringify(bad));process.exit(1)}if(rs[1].s!==200){console.error('[health] client not served:',JSON.stringify(rs[1]));process.exit(1)}console.log('[health] ok',JSON.stringify(rs))})"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    restart: on-failure
+
+volumes:
+  db-data:

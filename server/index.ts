@@ -57,11 +57,11 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen(port, "localhost", () => {
-    log(`serving on port ${port}`);
+  // This serves both the API and the client. Defaults to the Replit port/host,
+  // overridable through PORT/HOST (used by the Docker setup to bind 0.0.0.0).
+  const port = Number(process.env.PORT ?? 5000);
+  const host = process.env.HOST ?? "localhost";
+  server.listen(port, host, () => {
+    log(`serving on ${host}:${port}`);
   });
 })();
